@@ -5,9 +5,7 @@ import plotly.graph_objects as go
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
 
-# =========================================================
 # PAGE CONFIG
-# =========================================================
 
 st.set_page_config(
     page_title="Business Intelligence Hub",
@@ -16,25 +14,21 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# =========================================================
-# CUSTOM CSS
-# =========================================================
+
+# CSS
+
 
 st.markdown("""
 <style>
 
-/* =========================
-MAIN APP
-========================= */
+/* MAIN APP */
 
 .stApp {
     background-color: #0E1117;
     color: white;
 }
 
-/* =========================
-SIDEBAR
-========================= */
+/* SIDEBAR */
 
 section[data-testid="stSidebar"] {
     background-color: #161b22;
@@ -46,17 +40,13 @@ section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* =========================
-TITLE
-========================= */
+/* TITLE */
 
 h1, h2, h3 {
     color: white !important;
 }
 
-/* =========================
-METRIC CARDS
-========================= */
+/* METRIC CARDS */
 
 div[data-testid="stMetric"] {
     background-color: #1c1f26;
@@ -78,9 +68,7 @@ div[data-testid="stMetricLabel"] {
     font-size: 15px;
 }
 
-/* =========================
-TABS
-========================= */
+/* TABS */
 
 button[data-baseweb="tab"] {
     color: white !important;
@@ -92,9 +80,7 @@ button[data-baseweb="tab"][aria-selected="true"] {
     border-bottom: 3px solid #00d4ff !important;
 }
 
-/* =========================
-INPUTS
-========================= */
+/* INPUTS */
 
 .stTextInput input,
 .stDateInput input,
@@ -110,36 +96,28 @@ div[data-baseweb="select"] > div {
     color: white !important;
 }
 
-/* =========================
-PLOTLY CHARTS
-========================= */
+/* PLOTLY CHARTS */
 
 .plot-container {
     border-radius: 15px;
     overflow: hidden;
 }
 
-/* =========================
-EXPANDER
-========================= */
+/* EXPANDER */
 
 .streamlit-expanderHeader {
     color: white !important;
     font-weight: bold;
 }
 
-/* =========================
-TABLE
-========================= */
+/* TABLE */
 
 [data-testid="stDataFrame"] {
     background-color: white;
     border-radius: 10px;
 }
 
-/* =========================
-TOP HEADER
-========================= */
+/* TOP HEADER */
 
 header[data-testid="stHeader"] {
     background: rgba(0,0,0,0);
@@ -150,9 +128,7 @@ button[kind="header"] {
     color: white !important;
 }
 
-/* =========================
-SCROLLBAR
-========================= */
+/* SCROLLBAR */
 
 ::-webkit-scrollbar {
     width: 8px;
@@ -166,9 +142,7 @@ SCROLLBAR
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
 # DATA LOADING
-# =========================================================
 
 @st.cache_data
 def load_data():
@@ -185,10 +159,8 @@ try:
 
     df = load_data()
 
-    # =========================================================
     # SIDEBAR
-    # =========================================================
-
+  
     with st.sidebar:
 
         st.title("🛡️ Sunny Kumar")
@@ -217,10 +189,8 @@ try:
             "💡 Tip: Use filters to drill down into specific market segments."
         )
 
-    # =========================================================
     # FILTERING
-    # =========================================================
-
+   
     mask = (
         (df["Date"] >= pd.to_datetime(date_range[0])) &
         (df["Date"] <= pd.to_datetime(date_range[1]))
@@ -234,10 +204,8 @@ try:
 
     f_df = df.loc[mask]
 
-    # =========================================================
     # KPI SECTION
-    # =========================================================
-
+   
     st.title("🚀 Sales Data Analysis Dashboard")
 
     st.markdown("### Real-Time Sales Data Analysis Dashboard")
@@ -286,28 +254,21 @@ try:
 
     st.divider()
 
-    # =========================================================
     # TABS
-    # =========================================================
-
+   
     tab1, tab2, tab3 = st.tabs([
         "📈 Market Performance",
         "🎯 Target Analysis",
         "🤖 AI Insights"
     ])
-
-    # =========================================================
     # TAB 1
-    # =========================================================
-
+   
     with tab1:
 
         left_col, right_col = st.columns([2, 1])
 
-        # -----------------------------------------------------
         # SALES TREND
-        # -----------------------------------------------------
-
+        
         with left_col:
 
             trend_df = (
@@ -339,10 +300,8 @@ try:
                 use_container_width=True
             )
 
-        # -----------------------------------------------------
         # CATEGORY VS REGION
-        # -----------------------------------------------------
-
+        
         with right_col:
 
             fig_bar = px.bar(
@@ -365,19 +324,15 @@ try:
                 use_container_width=True
             )
 
-    # =========================================================
     # TAB 2
-    # =========================================================
-
+   
     with tab2:
 
         g1, g2 = st.columns(2)
 
         target = 200000
 
-        # -----------------------------------------------------
         # GAUGE CHART
-        # -----------------------------------------------------
 
         with g1:
 
@@ -411,10 +366,8 @@ try:
                 use_container_width=True
             )
 
-        # -----------------------------------------------------
         # HEATMAP
-        # -----------------------------------------------------
-
+       
         with g2:
 
             st.subheader("Regional Profitability Heatmap")
@@ -445,10 +398,8 @@ try:
                 use_container_width=True
             )
 
-    # =========================================================
     # TAB 3
-    # =========================================================
-
+    
     with tab3:
 
         st.subheader("Executive Summary")
@@ -489,9 +440,7 @@ try:
                 "🔮 **Forecast:** You are likely to achieve 90% of your target by month-end."
             )
 
-    # =========================================================
     # EXPORT SECTION
-    # =========================================================
 
     with st.expander("📥 Export Transactional Data"):
 
