@@ -238,9 +238,9 @@ try:
     # KPI SECTION
     # =========================================================
 
-    st.title("🚀 Business Intelligence Hub")
+    st.title("🚀 Sales Data Analysis Dashboard")
 
-    st.markdown("### Real-Time Business Performance Dashboard")
+    st.markdown("### Real-Time Sales Data Analysis Dashboard")
 
     c1, c2, c3, c4 = st.columns(4)
 
