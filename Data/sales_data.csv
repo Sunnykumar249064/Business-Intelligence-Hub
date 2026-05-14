@@ -1,0 +1,41 @@
+Order_ID,Product,Category,Region,Date,Sales,Profit
+1011,Printer,Electronics,West,2023-06-01,22000,4500
+1012,Bookshelf,Furniture,East,2023-06-05,18000,3500
+1013,Headphones,Electronics,North,2023-06-10,6000,1200
+1014,Bed,Furniture,South,2023-06-15,40000,8500
+1015,Camera,Electronics,West,2023-07-01,30000,7000
+1016,Wardrobe,Furniture,East,2023-07-08,35000,7500
+1017,Speaker,Electronics,North,2023-07-15,10000,2200
+1018,Coffee Table,Furniture,South,2023-07-20,9000,1800
+1019,Smartwatch,Electronics,West,2023-08-01,16000,3200
+1020,Dining Table,Furniture,East,2023-08-10,28000,6000
+1021,Router,Electronics,North,2023-08-18,4500,900
+1022,Cupboard,Furniture,South,2023-08-25,26000,5500
+1023,Projector,Electronics,West,2023-09-02,42000,9000
+1024,TV Stand,Furniture,East,2023-09-10,14000,2800
+1025,Gaming Console,Electronics,North,2023-09-18,38000,8000
+1026,Recliner,Furniture,South,2023-09-25,32000,6500
+1027,SSD,Electronics,West,2023-10-01,11000,2500
+1028,Study Table,Furniture,East,2023-10-08,13000,2600
+1029,Microphone,Electronics,North,2023-10-15,8000,1700
+1030,Shoe Rack,Furniture,South,2023-10-22,7500,1500
+1031,Drone,Electronics,West,2023-11-01,55000,12000
+1032,Dressing Table,Furniture,East,2023-11-10,24000,5000
+1033,Webcam,Electronics,North,2023-11-18,6500,1400
+1034,Mattress,Furniture,South,2023-11-25,20000,4200
+1035,Graphics Card,Electronics,West,2023-12-01,48000,10000
+1036,Bookshelf,Furniture,East,2023-12-08,17000,3400
+1037,Power Bank,Electronics,North,2023-12-15,4000,800
+1038,Office Chair,Furniture,South,2023-12-20,12500,2600
+1039,Smart TV,Electronics,West,2024-01-05,60000,13000
+1040,Bunk Bed,Furniture,East,2024-01-12,45000,9500
+1041,Earbuds,Electronics,North,2024-01-18,9000,1800
+1042,Cabinet,Furniture,South,2024-01-25,22000,4700
+1043,Laptop Stand,Electronics,West,2024-02-01,3500,700
+1044,Center Table,Furniture,East,2024-02-08,11000,2300
+1045,Smartphone,Electronics,North,2024-02-15,27000,5500
+1046,Bean Bag,Furniture,South,2024-02-22,8000,1600
+1047,Air Purifier,Electronics,West,2024-03-01,21000,4300
+1048,TV Unit,Furniture,East,2024-03-08,26000,5400
+1049,Mechanical Keyboard,Electronics,North,2024-03-15,9500,2000
+1050,Computer Desk,Furniture,South,2024-03-22,16000,3200
