@@ -5,128 +5,510 @@ import plotly.graph_objects as go
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
 
-# --- 1. CONFIG & THEME ---
-st.set_page_config(page_title="Analytics Pro | Dashboard", page_icon="⚡", layout="wide")
+# =========================================================
+# PAGE CONFIG
+# =========================================================
 
-# Custom CSS for glassmorphism effect
+st.set_page_config(
+    page_title="Business Intelligence Hub",
+    page_icon="🚀",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# =========================================================
+# CUSTOM CSS
+# =========================================================
+
 st.markdown("""
-    <style>
-    .stApp { background: #0E1117; color: #FFFFFF; }
-    div[data-testid="stMetricValue"] { font-size: 28px; color: #00d4ff; }
-    .plot-container { border-radius: 10px; background: #161b22; padding: 10px; }
-    </style>
-    """, unsafe_allow_html=True)
+<style>
 
-# --- 2. DATA ENGINE ---
+/* =========================
+MAIN APP
+========================= */
+
+.stApp {
+    background-color: #0E1117;
+    color: white;
+}
+
+/* =========================
+SIDEBAR
+========================= */
+
+section[data-testid="stSidebar"] {
+    background-color: #161b22;
+    border-right: 1px solid #2d3748;
+}
+
+/* Sidebar Text */
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* =========================
+TITLE
+========================= */
+
+h1, h2, h3 {
+    color: white !important;
+}
+
+/* =========================
+METRIC CARDS
+========================= */
+
+div[data-testid="stMetric"] {
+    background-color: #1c1f26;
+    border: 1px solid #2d3748;
+    padding: 15px;
+    border-radius: 14px;
+}
+
+/* Metric Value */
+div[data-testid="stMetricValue"] {
+    color: #00d4ff !important;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* Metric Label */
+div[data-testid="stMetricLabel"] {
+    color: white !important;
+    font-size: 15px;
+}
+
+/* =========================
+TABS
+========================= */
+
+button[data-baseweb="tab"] {
+    color: white !important;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    border-bottom: 3px solid #00d4ff !important;
+}
+
+/* =========================
+INPUTS
+========================= */
+
+.stTextInput input,
+.stDateInput input,
+.stSelectbox div,
+.stMultiSelect div {
+    background-color: #1c1f26 !important;
+    color: white !important;
+}
+
+/* Dropdown */
+div[data-baseweb="select"] > div {
+    background-color: #1c1f26 !important;
+    color: white !important;
+}
+
+/* =========================
+PLOTLY CHARTS
+========================= */
+
+.plot-container {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* =========================
+EXPANDER
+========================= */
+
+.streamlit-expanderHeader {
+    color: white !important;
+    font-weight: bold;
+}
+
+/* =========================
+TABLE
+========================= */
+
+[data-testid="stDataFrame"] {
+    background-color: white;
+    border-radius: 10px;
+}
+
+/* =========================
+TOP HEADER
+========================= */
+
+header[data-testid="stHeader"] {
+    background: rgba(0,0,0,0);
+}
+
+/* Toolbar Icons */
+button[kind="header"] {
+    color: white !important;
+}
+
+/* =========================
+SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00d4ff;
+    border-radius: 10px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# =========================================================
+# DATA LOADING
+# =========================================================
+
 @st.cache_data
 def load_data():
     df = pd.read_csv("Data/sales_data.csv")
-    df['Date'] = pd.to_datetime(df['Date'])
-    # Adding Year/Month for better grouping
-    df['Month_Year'] = df['Date'].dt.to_period('M').astype(str)
+
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    df["Month_Year"] = df["Date"].dt.to_period("M").astype(str)
+
     return df
 
+
 try:
+
     df = load_data()
 
-    # --- 3. SIDEBAR (Advanced Navigation) ---
-    with st.sidebar:
-        st.title("🛡️ Sunny Kumar")
-        st.divider()
-        
-        # Date Range with better UI
-        date_range = st.date_input("Analysis Period", [df['Date'].min(), df['Date'].max()])
-        
-        # Hierarchical Filters
-        region = st.multiselect("📍 Geography", df['Region'].unique(), default=df['Region'].unique())
-        cat = st.selectbox("📦 Category Focus", ["All"] + list(df['Category'].unique()))
-        
-        st.divider()
-        st.info("💡 Tip: Use filters to drill down into specific market segments.")
+    # =========================================================
+    # SIDEBAR
+    # =========================================================
 
-    # --- 4. FILTERING LOGIC ---
-    mask = (df['Date'] >= pd.to_datetime(date_range[0])) & (df['Date'] <= pd.to_datetime(date_range[1]))
+    with st.sidebar:
+
+        st.title("🛡️ Sunny Kumar")
+
+        st.divider()
+
+        date_range = st.date_input(
+            "📅 Analysis Period",
+            [df["Date"].min(), df["Date"].max()]
+        )
+
+        region = st.multiselect(
+            "📍 Geography",
+            df["Region"].unique(),
+            default=df["Region"].unique()
+        )
+
+        cat = st.selectbox(
+            "📦 Category Focus",
+            ["All"] + list(df["Category"].unique())
+        )
+
+        st.divider()
+
+        st.info(
+            "💡 Tip: Use filters to drill down into specific market segments."
+        )
+
+    # =========================================================
+    # FILTERING
+    # =========================================================
+
+    mask = (
+        (df["Date"] >= pd.to_datetime(date_range[0])) &
+        (df["Date"] <= pd.to_datetime(date_range[1]))
+    )
+
     if region:
-        mask &= df['Region'].isin(region)
+        mask &= df["Region"].isin(region)
+
     if cat != "All":
-        mask &= (df['Category'] == cat)
-    
+        mask &= (df["Category"] == cat)
+
     f_df = df.loc[mask]
 
-    # --- 5. TOP KPI ROW ---
+    # =========================================================
+    # KPI SECTION
+    # =========================================================
+
     st.title("🚀 Business Intelligence Hub")
-    
+
+    st.markdown("### Real-Time Business Performance Dashboard")
+
     c1, c2, c3, c4 = st.columns(4)
-    total_sales = f_df['Sales'].sum()
-    total_profit = f_df['Profit'].sum()
-    target = 200000 # Example Target
-    
-    c1.metric("Gross Revenue", f"₹{total_sales:,}", delta="14% vs LW")
-    c2.metric("Net Profit", f"₹{total_profit:,}", delta="8% vs LW")
-    c3.metric("Profit Margin", f"{(total_profit/total_sales*100):.1f}%" if total_sales > 0 else "0%")
-    c4.metric("Active Orders", len(f_df))
-    
-    style_metric_cards(background_color="#1c1f26", border_left_color="#00d4ff", border_size_px=1)
+
+    total_sales = f_df["Sales"].sum()
+
+    total_profit = f_df["Profit"].sum()
+
+    total_orders = len(f_df)
+
+    profit_margin = (
+        (total_profit / total_sales) * 100
+        if total_sales > 0
+        else 0
+    )
+
+    c1.metric(
+        "Gross Revenue",
+        f"₹{total_sales:,}",
+        delta="14% vs Last Week"
+    )
+
+    c2.metric(
+        "Net Profit",
+        f"₹{total_profit:,}",
+        delta="8% vs Last Week"
+    )
+
+    c3.metric(
+        "Profit Margin",
+        f"{profit_margin:.1f}%"
+    )
+
+    c4.metric(
+        "Active Orders",
+        total_orders
+    )
+
+    style_metric_cards(
+        background_color="#1c1f26",
+        border_left_color="#00d4ff",
+        border_size_px=1
+    )
 
     st.divider()
 
-    # --- 6. ADVANCED VISUALS ---
-    tab1, tab2, tab3 = st.tabs(["📈 Market Performance", "🎯 Target Analysis", "🤖 AI Insights"])
+    # =========================================================
+    # TABS
+    # =========================================================
+
+    tab1, tab2, tab3 = st.tabs([
+        "📈 Market Performance",
+        "🎯 Target Analysis",
+        "🤖 AI Insights"
+    ])
+
+    # =========================================================
+    # TAB 1
+    # =========================================================
 
     with tab1:
-        col_left, col_right = st.columns([2, 1])
-        with col_left:
-            # Sales Trend with Moving Average
-            trend_df = f_df.groupby('Date')['Sales'].sum().reset_index()
-            fig_trend = px.line(trend_df, x='Date', y='Sales', title="Revenue Stream (Time-Series)")
-            fig_trend.update_traces(line_color='#00d4ff', fill='tozeroy')
-            st.plotly_chart(fig_trend, use_container_width=True)
-        
-        with col_right:
-            # Category Breakdown
-            fig_bar = px.bar(f_df, x='Category', y='Sales', color='Region', title="Category vs Region", barmode='group')
-            st.plotly_chart(fig_bar, use_container_width=True)
+
+        left_col, right_col = st.columns([2, 1])
+
+        # -----------------------------------------------------
+        # SALES TREND
+        # -----------------------------------------------------
+
+        with left_col:
+
+            trend_df = (
+                f_df.groupby("Date")["Sales"]
+                .sum()
+                .reset_index()
+            )
+
+            fig_trend = px.line(
+                trend_df,
+                x="Date",
+                y="Sales",
+                title="Revenue Stream (Time-Series)"
+            )
+
+            fig_trend.update_traces(
+                line_color="#00d4ff",
+                fill="tozeroy"
+            )
+
+            fig_trend.update_layout(
+                paper_bgcolor="#161b22",
+                plot_bgcolor="#161b22",
+                font_color="white"
+            )
+
+            st.plotly_chart(
+                fig_trend,
+                use_container_width=True
+            )
+
+        # -----------------------------------------------------
+        # CATEGORY VS REGION
+        # -----------------------------------------------------
+
+        with right_col:
+
+            fig_bar = px.bar(
+                f_df,
+                x="Category",
+                y="Sales",
+                color="Region",
+                title="Category vs Region",
+                barmode="group"
+            )
+
+            fig_bar.update_layout(
+                paper_bgcolor="#161b22",
+                plot_bgcolor="#161b22",
+                font_color="white"
+            )
+
+            st.plotly_chart(
+                fig_bar,
+                use_container_width=True
+            )
+
+    # =========================================================
+    # TAB 2
+    # =========================================================
 
     with tab2:
-        col_g1, col_g2 = st.columns(2)
-        with col_g1:
-            # Gauge Chart for Target
+
+        g1, g2 = st.columns(2)
+
+        target = 200000
+
+        # -----------------------------------------------------
+        # GAUGE CHART
+        # -----------------------------------------------------
+
+        with g1:
+
             fig_gauge = go.Figure(go.Indicator(
-                mode = "gauge+number",
-                value = total_sales,
-                title = {'text': "Sales Target Achievement"},
-                gauge = {
-                    'axis': {'range': [None, target]},
-                    'bar': {'color': "#00d4ff"},
-                    'steps': [
-                        {'range': [0, target*0.5], 'color': "gray"},
-                        {'range': [target*0.5, target], 'color': "lightgray"}]
+                mode="gauge+number",
+                value=total_sales,
+                title={"text": "Sales Target Achievement"},
+                gauge={
+                    "axis": {"range": [0, target]},
+                    "bar": {"color": "#00d4ff"},
+                    "steps": [
+                        {
+                            "range": [0, target * 0.5],
+                            "color": "#2d3748"
+                        },
+                        {
+                            "range": [target * 0.5, target],
+                            "color": "#4a5568"
+                        }
+                    ]
                 }
             ))
-            fig_gauge.update_layout(paper_bgcolor="#0e1117", font={'color': "white"})
-            st.plotly_chart(fig_gauge, use_container_width=True)
-        
-        with col_g2:
+
+            fig_gauge.update_layout(
+                paper_bgcolor="#161b22",
+                font={"color": "white"}
+            )
+
+            st.plotly_chart(
+                fig_gauge,
+                use_container_width=True
+            )
+
+        # -----------------------------------------------------
+        # HEATMAP
+        # -----------------------------------------------------
+
+        with g2:
+
             st.subheader("Regional Profitability Heatmap")
-            heat_df = f_df.groupby('Region')[['Sales', 'Profit']].sum().reset_index()
-            fig_heat = px.density_heatmap(heat_df, x="Region", y="Sales", z="Profit", text_auto=True, color_continuous_scale='Viridis')
-            st.plotly_chart(fig_heat, use_container_width=True)
+
+            heat_df = (
+                f_df.groupby("Region")[["Sales", "Profit"]]
+                .sum()
+                .reset_index()
+            )
+
+            fig_heat = px.density_heatmap(
+                heat_df,
+                x="Region",
+                y="Sales",
+                z="Profit",
+                text_auto=True,
+                color_continuous_scale="Viridis"
+            )
+
+            fig_heat.update_layout(
+                paper_bgcolor="#161b22",
+                plot_bgcolor="#161b22",
+                font_color="white"
+            )
+
+            st.plotly_chart(
+                fig_heat,
+                use_container_width=True
+            )
+
+    # =========================================================
+    # TAB 3
+    # =========================================================
 
     with tab3:
-        st.subheader("Executive Summary (Auto-Generated)")
-        best_region = f_df.groupby('Region')['Sales'].sum().idxmax()
-        worst_product = f_df.groupby('Product')['Profit'].sum().idxmin()
-        
-        with stylable_container(key="insight_box", css_styles="""{ border: 1px solid #00d4ff; border-radius: 10px; padding: 20px; }"""):
-            st.write(f"✅ **Strength:** Your best performing market is **{best_region}**.")
-            st.write(f"⚠️ **Attention:** Product **{worst_product}** is underperforming in terms of net profit.")
-            st.write("🔮 **Forecast:** Based on current velocity, you will hit 90% of your target by month-end.")
 
-    # --- 7. EXPORT & DATA ---
+        st.subheader("Executive Summary")
+
+        best_region = (
+            f_df.groupby("Region")["Sales"]
+            .sum()
+            .idxmax()
+        )
+
+        worst_product = (
+            f_df.groupby("Product")["Profit"]
+            .sum()
+            .idxmin()
+        )
+
+        with stylable_container(
+            key="insight_box",
+            css_styles="""
+            {
+                border: 1px solid #00d4ff;
+                border-radius: 15px;
+                padding: 20px;
+                background-color: #161b22;
+            }
+            """
+        ):
+
+            st.write(
+                f"✅ **Strength:** Best performing region is **{best_region}**."
+            )
+
+            st.write(
+                f"⚠️ **Attention:** Product **{worst_product}** is underperforming."
+            )
+
+            st.write(
+                "🔮 **Forecast:** You are likely to achieve 90% of your target by month-end."
+            )
+
+    # =========================================================
+    # EXPORT SECTION
+    # =========================================================
+
     with st.expander("📥 Export Transactional Data"):
-        st.dataframe(f_df.style.background_gradient(cmap='Blues'), use_container_width=True)
-        csv = f_df.to_csv(index=False).encode('utf-8')
-        st.download_button("Download CSV Report", data=csv, file_name="sales_report.csv", mime="text/csv")
+
+        st.dataframe(
+            f_df,
+            use_container_width=True
+        )
+
+        csv = f_df.to_csv(index=False).encode("utf-8")
+
+        st.download_button(
+            "⬇️ Download CSV Report",
+            data=csv,
+            file_name="sales_report.csv",
+            mime="text/csv"
+        )
 
 except Exception as e:
-    st.error(f"Setup Error: {e}")
+
+    st.error(f"❌ Setup Error: {e}")
